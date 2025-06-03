@@ -96,7 +96,34 @@ class SellerAuthen : public Authen_Strategy {
             }
         };       
 
+class User{ //main class
+  private:
+    string username;
+    string password;
 
+  public:
+    User(const string& user, const string& pass) : username(user), password(pass) {}
+
+    string getUsername() const {
+        return username;
+    }
+
+    string getPassword() const {
+        return password;
+    }
+};
+
+class Seller : public User {//derived class for seller
+  public:
+    Seller(const string& user, const string& pass)
+        : User(user, pass){}
+};  
+
+class Buyer : public User {//derived class for buyer
+  public:
+    Buyer(const string& user, const string& pass)
+        : User(user, pass){}
+};
 
 int main () {
  
