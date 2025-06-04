@@ -113,21 +113,357 @@ class User{ //main class
     }
 };
 
-class Seller : public User {//derived class for seller
+// Derived class for seller
+class Seller : public User {
   public:
     Seller(const string& user, const string& pass)
         : User(user, pass){}
+
+    void menu(){
+        int choice;
+        do {
+        cout << "\nWelcome to the Seller Menu \n";
+        cout << "1. Add Product" << endl;
+        cout << "2. View Products" << endl;
+        cout << "3. Delete Product" << endl;
+        cout << "4. Edit Product" << endl;
+        cout << "5. View Transaction" << endl;
+        cout << "6. Logout" << endl;
+
+        cout << "Please enter option: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1:
+                addProduct();
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                cout << "Exiting Seller Menu." << endl;
+                return;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+                menu();
+        }
+        }
+        while (choice != 6);
+        
+    };
+
+    void addProduct(){
+        char addProductChoice;
+        do{
+        cout << "Product added by seller: " << getUsername() << endl;
+        cout << "Name of the product: ";
+        string productName;
+        getline(cin >> ws, productName);
+
+        cout << "Quantity: ";
+        int quantity;
+        cin >> quantity;
+
+        cout << "Price: ";
+        double price;
+        cin >> price;
+
+        ofstream productFile("products.txt", ios::app);
+        productFile << "Seller: " << getUsername() << "\tProduct: " << productName << "\tQuantity: "<< quantity << "\tPrice: " << price << endl;
+        productFile.close();
+
+        cout<< "\nProduct added successfully!\n" << endl;
+        cout << "Do you want to add another product? (Yy/Nn): ";
+        cin >> addProductChoice;
+        }
+        while(addProductChoice == 'Y' || addProductChoice == 'y');
+        menu();
+
+    };
+
 };  
 
-class Buyer : public User {//derived class for buyer
+// Derived class for buyer
+class Buyer : public User {
   public:
     Buyer(const string& user, const string& pass)
         : User(user, pass){}
+
+    void menu() {
+        int choice;
+        do{
+        cout << "\nWelcome to the Buyer Menu\n";
+        cout << "1. Add to Cart" << endl;
+        cout << "2. View Cart" << endl;
+        cout << "3. Remove from Cart" << endl;
+        cout << "4. Update Cart" << endl;
+        cout << "5. Logout" << endl;
+
+        cout << "Please enter option: ";
+        cin >> choice;
+        cin.ignore();
+
+        switch (choice) {
+            case 1:
+                addToCart();
+                break;
+            case 2:
+                viewCart();
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                cout << "Exiting Buyer Menu." << endl;
+                return;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+                menu();
+                break;
+        }
+        }
+        while (choice != 5);
+    };
+
+    void addToCart() {
+    char addToCartChoice;
+    do {
+        ifstream productFile("products.txt");
+        vector<string> products;
+        string line;
+
+        cout << "\nAvailable Products:\n";
+        int productIndex = 1;
+        while (getline(productFile, line)) {
+            products.push_back(line);
+            cout << productIndex++ << ". " << line << endl;
+        }
+        productFile.close();
+
+        if (products.empty()) {
+            cout << "No products found.\n";
+            return;
+        }
+
+        cout << "\nEnter the product ID (1 to " << products.size() << "): ";
+        int productId;
+        cin >> productId;
+
+        if (productId < 1 || productId > products.size()) {
+            cout << "Invalid product ID. Please try again.\n";
+            continue;
+        }
+
+        string selectedLine = products[productId - 1];
+
+        string seller, productName;
+        int quantity, price;
+
+        size_t sellerPos = selectedLine.find("Seller:");
+        size_t productPos = selectedLine.find("Product:");
+        size_t quantityPos = selectedLine.find("Quantity:");
+        size_t pricePos = selectedLine.find("Price:");
+
+        if (sellerPos == string::npos || productPos == string::npos || quantityPos == string::npos || pricePos == string::npos) {
+            cout << "Invalid product format.\n";
+            continue;
+        }
+
+        seller = selectedLine.substr(sellerPos + 7, productPos - (sellerPos + 7));
+        productName = selectedLine.substr(productPos + 8, quantityPos - (productPos + 8));
+        string quantityStr = selectedLine.substr(quantityPos + 9, pricePos - (quantityPos + 9));
+        string priceStr = selectedLine.substr(pricePos + 6);
+
+        // Convert to int
+        try {
+            quantity = stoi(quantityStr);
+            price = stoi(priceStr);
+        } catch (...) {
+            cout << "Invalid number format in product data.\n";
+            continue;
+        }
+
+        int buyQty;
+        cout << "Enter quantity to buy (Available: " << quantity << "): ";
+        cin >> buyQty;
+
+        if (buyQty <= 0 || buyQty > quantity) {
+            cout << "Invalid quantity.\n";
+            continue;
+        }
+
+        // Deduct the quantity
+        quantity -= buyQty;
+
+        // Reconstruct updated line
+        string updatedLine = "Seller:" + seller + "\tProduct:" + productName +
+                             "\tQuantity:" + to_string(quantity) + "\tPrice:" + to_string(price);
+        products[productId - 1] = updatedLine;
+
+        // Write updated product list to temp file
+        ofstream tempFile("temp.txt");
+        for (const auto& prod : products) {
+            tempFile << prod << endl;
+        }
+        tempFile.close();
+
+        // Replace original file
+        remove("products.txt");
+        rename("temp.txt", "products.txt");
+
+        // Add item to cart.txt
+        ofstream cartFile("cart.txt", ios::app);
+        if (cartFile.is_open()) {
+            cartFile << "Buyer: " << getUsername()
+                     << " | Product: " << productName
+                     << " | Price: " << price
+                     << " | Quantity: " << buyQty << endl;
+            cartFile.close();
+            cout << "\nProduct added to cart successfully!\n";
+        } else {
+            cout << "Error: Item not added to cart.\n";
+            return;
+        }
+
+        cout << "Do you want to add another product to cart? (Y/y for yes): ";
+        cin >> addToCartChoice;
+
+    } while (addToCartChoice == 'Y' || addToCartChoice == 'y');
+
+    menu();
+}
+
+    void viewCart() {
+        char viewCartChoice;
+        do {
+            ifstream cartFile("cart.txt");
+            string line;
+            cout << "\nYour Cart:\n";
+            while (getline(cartFile, line)) {
+                cout << line << endl;
+            }
+            cartFile.close();
+
+            cout << "\nPress X to exit viewing cart: ";
+            cin >> viewCartChoice;
+        } 
+        
+        while (viewCartChoice != 'X' && viewCartChoice != 'x');
+        menu();
+    };
+
+    void removeToCart() {
+        char removeFromCartChoice;
+        do {
+            ifstream cartFile("cart.txt");
+            string line;
+            
+            vector<string> cartItems;
+            cout << "\nYour Cart:\n";
+            int itemIndex = 1;
+            while (getline(cartFile, line)) {
+                cartItems.push_back(line);
+                cout << itemIndex++ << ". " << line << endl;
+            }
+            cartFile.close();
+            if (cartItems.empty()) {
+                cout << "Your cart is empty." << endl;
+                return;
+            }
+            cout << "\nEnter the item number to remove (1-" << cartItems.size() << "): ";
+            int itemNumber;
+            cin >> itemNumber;
+            cartItems.erase(cartItems.begin() + itemNumber - 1);
+            ofstream outFile("cart.txt");
+            for (const auto& item : cartItems) {
+                outFile << item << endl;
+            }
+            outFile.close();
+            cout << "\nItem removed from cart successfully!\n" << endl;
+            cout << "Do you want to remove another item from cart? (Yy/Nn): ";
+            cin >> removeFromCartChoice;
+        }
+        while (removeFromCartChoice == 'Y' || removeFromCartChoice == 'y');
+        menu();
+    }
+
 };
 
 int main () {
- 
 
+    int choice;
+    
+    do {
+        cout << "\nWelcome to the E-commerce Platform\n";
+
+        cout << "\n***** Customer *****:\n";
+        cout << "1. Customer Login\n";
+        cout << "2. Customer Signup\n";
+
+        cout << "\n***** Seller *****:\n";
+        cout << "3. Seller Login\n";
+        cout << "4. Seller Signup\n";
+        cout << "\n5. Exit\n";
+        cout << "\nPlease enter your choice: ";
+        cin >> choice;
+        cin.ignore();
+
+        Authen_Strategy* authStrategy = nullptr;
+        string userType;
+
+       switch (choice) {
+            case 1:
+                authStrategy = new CustomerAthen();
+                userType = "Customer";
+                break;
+            case 2:
+                authStrategy = new CustomerAthen();
+                userType = "Customer";
+                break;
+            case 3:
+                authStrategy = new SellerAuthen();
+                userType = "Seller";
+                break;
+            case 4:
+                authStrategy = new SellerAuthen();
+                userType = "Seller";
+                break;
+            case 5:
+                cout << "Exiting the program." << endl;
+                return 0;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+                continue;
+        }
+        string username;
+        if (choice == 1 || choice == 3) {
+            username = authStrategy->login();
+        } 
+        else {
+            username = authStrategy->signup();
+        }
+
+        if (!username.empty()) {
+            if (userType == "Customer") {
+                Buyer buyer(username, "");
+                buyer.menu();
+            } 
+            else if (userType == "Seller") {
+                Seller seller(username, "");
+                seller.menu();
+            }
+        }
+
+        delete authStrategy;
+    }
+    while (choice != 5);
     return 0;
    
 }
@@ -141,6 +477,9 @@ IT2A
 /* Notes */
 // Done na Strategy pattern tas flow nung system sa main
 // Na try ko na test ko yung strat pattern
+// Pa add nunng mga functions sa mga class either one if kaya
+// ako na bahala sa logic dun sa menu
+// nag add na mee ng txt file fore cart
 
 
 /*Things to do*/

@@ -1,0 +1,3 @@
+Seller: b	Product: 1	Quantity: 1200	Price: 200
+Seller: b		Product: Toyota		Quantity:50	Price:10
+Seller: b	Product: Nissan	Quantity: 1000	Price: 500
