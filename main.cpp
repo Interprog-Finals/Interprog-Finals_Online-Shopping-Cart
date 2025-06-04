@@ -139,12 +139,16 @@ class Seller : public User {
                 addProduct();
                 break;
             case 2:
+                viewProducts();
                 break;
             case 3:
+                deleteProduct();
                 break;
             case 4:
+                editProduct();
                 break;
             case 5:
+                viewTransaction();
                 break;
             case 6:
                 cout << "Exiting Seller Menu." << endl;
@@ -187,6 +191,143 @@ class Seller : public User {
 
     };
 
+    void viewProducts(){
+    
+        ifstream productFile("products.txt");
+        string line;
+        cout << "\nAvailable Products:\n";
+        while (getline(productFile, line)) {
+            cout << line << endl;
+        }
+        productFile.close();
+
+        menu();
+    }
+
+    void deleteProduct() {
+        
+            ifstream productFile("products.txt");
+            string line;
+            vector<string> products;
+            cout << "\nChoose Product to Delete:\n";
+            int ptroductIndex = 1;
+            while (getline(productFile, line)) {
+                products.push_back(line);
+                cout << ptroductIndex++ << ". " << line << endl;
+            }
+            
+            productFile.close();
+            
+            if (products.empty()) {
+                cout << "No products available to delete." << endl;
+                return;
+            }
+            cout << "\nEnter 0 to cancel deletion.\n";
+            cout <<"\nEnter the product number to delete: ";
+            int productNumber;
+            cin >> productNumber;
+
+            if (productNumber < 1 || productNumber > products.size()) {
+                cout << "Invalid product number. Please try again." << endl;
+                return;
+            }
+            else if (productNumber == 0) {
+                cout << "Deletion cancelled." << endl;
+                return;
+            }
+
+
+            products.erase(products.begin() + productNumber - 1);
+            ofstream outFile("products.txt");
+            for (const auto& product : products) {
+                outFile << product << endl;
+            }
+            outFile.close();
+
+            cout << "\nProduct deleted successfully!\n" << endl;
+        
+        menu();
+    }
+
+    void editProduct() {
+        char editProductChoice;
+        do {
+            ifstream productFile("products.txt");
+            string line;
+
+            vector<string> products;
+            int ptroductIndex = 1;
+
+            cout << "\nChoose Product to Edit:\n";
+            while (getline(productFile, line)) {
+                products.push_back(line);
+                cout << ptroductIndex++ << ". " << line << endl;
+            }
+            productFile.close();
+            cout << "\nEnter the product number to edit (1-" << products.size() << "): ";
+            int productNumber;
+            cin >> productNumber;
+
+            if (productNumber < 1 || productNumber > products.size()) {
+                cout << "Invalid product number. Please try again." << endl;
+                continue;
+            }
+
+            int newQuantity;
+            cout << "Enter the new quantity: ";
+            cin >> newQuantity;
+
+            string& selectedProduct = products[productNumber - 1];
+            size_t quantityPos = selectedProduct.find("Quantity:");
+            if (quantityPos != string::npos) {
+            size_t qtyValueStart = quantityPos + 9;
+            size_t qtyValueEnd = selectedProduct.find('\t', qtyValueStart);
+            selectedProduct.replace(qtyValueStart, qtyValueEnd - qtyValueStart, to_string(newQuantity));
+            }
+            else {
+            cout << "Error: Quantity field not found.\n";
+            continue;
+           }
+
+            ofstream outFile("products.txt");
+            for (const auto& product : products) {
+                outFile << product << endl;
+            }
+            outFile.close();
+
+            cout << "\nProduct Restocked Successfully!\n" << endl;
+
+            cout << "Do you want to restock another product? (Yy/Nn): ";
+            cin >> editProductChoice;
+        } 
+        while (editProductChoice == 'Y' || editProductChoice == 'y');
+        menu();
+    }
+
+    void viewTransaction() {
+        ifstream transactionFile("cart.txt");
+        if (!transactionFile.is_open()) {
+            cout << "No transactions file found.\n";
+            return;
+        }
+    
+        string line;
+        bool hasTransaction = false;
+    
+        cout << "\n=== Transaction History ===\n";
+        while (getline(transactionFile, line)) {
+            if (!line.empty()) {
+                cout << line << endl;
+                hasTransaction = true;
+            }
+        }
+        transactionFile.close();
+    
+        if (!hasTransaction) {
+            cout << "No transactions available.\n";
+        }
+        cout << "===========================\n\n";
+    }
 };  
 
 // Derived class for buyer
