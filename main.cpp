@@ -358,6 +358,7 @@ class Buyer : public User {
                 viewCart();
                 break;
             case 3:
+                removeToCart();
                 break;
             case 4:
                 break;
@@ -499,6 +500,41 @@ class Buyer : public User {
         while (viewCartChoice != 'X' && viewCartChoice != 'x');
         menu();
     };
+
+    void removeToCart() {
+        char removeFromCartChoice;
+        do {
+            ifstream cartFile("cart.txt");
+            string line;
+            
+            vector<string> cartItems;
+            cout << "\nYour Cart:\n";
+            int itemIndex = 1;
+            while (getline(cartFile, line)) {
+                cartItems.push_back(line);
+                cout << itemIndex++ << ". " << line << endl;
+            }
+            cartFile.close();
+            if (cartItems.empty()) {
+                cout << "Your cart is empty." << endl;
+                return;
+            }
+            cout << "\nEnter the item number to remove (1-" << cartItems.size() << "): ";
+            int itemNumber;
+            cin >> itemNumber;
+            cartItems.erase(cartItems.begin() + itemNumber - 1);
+            ofstream outFile("cart.txt");
+            for (const auto& item : cartItems) {
+                outFile << item << endl;
+            }
+            outFile.close();
+            cout << "\nItem removed from cart successfully!\n" << endl;
+            cout << "Do you want to remove another item from cart? (Yy/Nn): ";
+            cin >> removeFromCartChoice;
+        }
+        while (removeFromCartChoice == 'Y' || removeFromCartChoice == 'y');
+        menu();
+    }
 
     void removeToCart() {
         char removeFromCartChoice;
