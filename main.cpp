@@ -336,7 +336,7 @@ class Buyer : public User {
     Buyer(const string& user, const string& pass)
         : User(user, pass){}
 
-    void menu() {
+     void menu() {
         int choice;
         do{
         cout << "\nWelcome to the Buyer Menu\n";
@@ -361,6 +361,7 @@ class Buyer : public User {
                 removeToCart();
                 break;
             case 4:
+                updateCart();
                 break;
             case 5:
                 cout << "Exiting Buyer Menu." << endl;
@@ -482,6 +483,9 @@ class Buyer : public User {
     menu();
 }
 
+
+    
+    
     void viewCart() {
         char viewCartChoice;
         do {
@@ -536,38 +540,55 @@ class Buyer : public User {
         menu();
     }
 
-    void removeToCart() {
-        char removeFromCartChoice;
-        do {
-            ifstream cartFile("cart.txt");
-            string line;
-            
-            vector<string> cartItems;
-            cout << "\nYour Cart:\n";
-            int itemIndex = 1;
-            while (getline(cartFile, line)) {
-                cartItems.push_back(line);
-                cout << itemIndex++ << ". " << line << endl;
-            }
-            cartFile.close();
-            if (cartItems.empty()) {
-                cout << "Your cart is empty." << endl;
-                return;
-            }
-            cout << "\nEnter the item number to remove (1-" << cartItems.size() << "): ";
-            int itemNumber;
-            cin >> itemNumber;
-            cartItems.erase(cartItems.begin() + itemNumber - 1);
-            ofstream outFile("cart.txt");
-            for (const auto& item : cartItems) {
-                outFile << item << endl;
-            }
-            outFile.close();
-            cout << "\nItem removed from cart successfully!\n" << endl;
-            cout << "Do you want to remove another item from cart? (Yy/Nn): ";
-            cin >> removeFromCartChoice;
+    void updateCart() {
+       char updateCartChoice;
+       do {
+        ifstream cartFile("cart.txt");
+        string line;
+        vector<string> cartItems;
+        cout << "\nYour Cart:\n";
+        int itemIndex = 1;
+        while (getline(cartFile, line)) {
+            cartItems.push_back(line);
+            cout << itemIndex++ << ". " << line << endl;
         }
-        while (removeFromCartChoice == 'Y' || removeFromCartChoice == 'y');
+        cartFile.close();
+        if (cartItems.empty()) {
+            cout << "Your cart is empty." << endl;
+            return;
+        }
+        cout << "\nEnter the item number to update (1-" << cartItems.size() << "): ";
+        int itemNumber;
+        cin >> itemNumber;
+
+        if (itemNumber < 1 || itemNumber > cartItems.size()) {
+            cout << "Invalid item number. Please try again." << endl;
+            continue;
+        }
+
+        cout << "Enter new quantity: ";
+        int newQuantity;
+        cin >> newQuantity;
+
+        string updatedItem = cartItems[itemNumber - 1];
+        size_t pos = updatedItem.find("Quantity: ");
+        if (pos != string::npos) {
+            updatedItem.replace(pos + 10, updatedItem.find("\t", pos + 10) - (pos + 10), to_string(newQuantity));
+            cartItems[itemNumber - 1] = updatedItem;
+        }
+
+        ofstream outFile("cart.txt");
+        for (const auto& item : cartItems) {
+            outFile << item << endl;
+        }
+        outFile.close();
+
+        cout << "\nCart updated successfully!\n" << endl;
+
+        cout << "Do you want to update another item in the cart? (Yy/Nn): ";
+
+       }
+       while (updateCartChoice == 'Y' || updateCartChoice == 'y');
         menu();
     }
 
@@ -642,6 +663,7 @@ int main () {
     }
     while (choice != 5);
     return 0;
+    
    
 }
 
