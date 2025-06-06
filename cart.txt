@@ -1,1 +1,0 @@
-Buyer: s | Product:  Toyota	 | Price: 10 | Quantity: 150

@@ -600,6 +600,7 @@ int main () {
     
     do {
         cout << "\nWelcome to the E-commerce Platform\n";
+        cout << "Online Shopping System\n";
 
         cout << "\n***** Customer *****:\n";
         cout << "1. Customer Login\n";
@@ -673,31 +674,4 @@ Kyle Gabriel M. Dones
 IT2A
 */
 
-/* Notes */
-// Done na Strategy pattern tas flow nung system sa main
-// Na try ko na test ko yung strat pattern
-// Pa add nunng mga functions sa mga class either one if kaya
-// ako na bahala sa logic dun sa menu
-// nag add na mee ng txt file fore cart
-
-
-/*Things to do*/
-// Class for User/Customer/Seller
-// Then define functions for each user
-// Last na yung main flow ng system
-
-// Me na bahala sa file handling pm mo nlng
-
-/*  Customer */
-// Add to Cart
-// View Cart
-// Delete item from cart
-// Edit Quantity in cart
-
-/* Seller */
-// Add product
-// View products
-// Delete product/item
-// Edit product
-// View transaction
 
