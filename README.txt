@@ -1,35 +1,59 @@
-Welcome to the Online Shopping Cart By 
--Kiel E. Biscocho
--Kyle Gabriel Dones
+# 🛒 Online Shopping Cart System
 
-This project aims to simulate being a seller and a customer in an online store environment. 
-The project is navigated using the numbers of the respective choice printed into the terminal. 
-Both the seller and the customer can sign up and log in to the online shopping cart. 
-The user will be able to do the following given that the user log in to the respective user role. (case sensitive)
+**Developed by:**
+- Kiel E. Biscocho  
+- Kyle Gabriel Dones
 
-________________________________
-The Customer can:
-1. Add to Cart
-2. View Cart
-3. Remove from Cart
-4. Update Cart
-5. Logout
-________________________________
-The Seller can:
-1. Add Product
-2. View Products
-3. Delete Product
-4. Edit Product
-5. View Transaction
-6. Logout
-(Note: if you just downloaded the main.cpp file the database of the project will not be able to hold the credentials input by the user)
+## 📌 Project Overview
 
-________________________________
-Default seller credentials
-	Username: seller
-	Password: sellerpass
+This C++ console-based application simulates an **Online Shopping Cart System** where users can act either as **Sellers** or **Customers**. It offers a simple, menu-driven interface operated through numeric selections in the terminal.
 
-________________________________
-Default customer credentials
-	Username: customer
-	Password: customerpass
+The system supports:
+- **Sign-up and login** functionality for both sellers and customers  
+- **Role-based access** to different features (case-sensitive login required)  
+- **File-based data storage** (ensure you have supporting files for full functionality)
+
+---
+
+## 👥 User Roles & Features
+
+### 🔹 Customer
+Upon login, the customer can:
+1. Add items to the cart  
+2. View cart contents  
+3. Remove items from the cart  
+4. Update quantities or items in the cart  
+5. Logout  
+
+### 🔸 Seller
+Upon login, the seller can:
+1. Add products to the store  
+2. View the product list  
+3. Delete products  
+4. Edit product details  
+5. View customer transactions  
+6. Logout  
+
+> ⚠️ **Note:** If you're only using `main.cpp` without the data files, the system won’t persist user credentials or product/cart data.
+
+---
+
+## 🔐 Default Credentials
+
+To test the system quickly, use the following built-in accounts:
+
+### Seller
+- **Username:** `seller`  
+- **Password:** `sellerpass`
+
+### Customer
+- **Username:** `customer`  
+- **Password:** `customerpass`
+
+---
+
+## 🚀 How to Run
+
+1. Compile the code using a C++ compiler:
+   ```bash
+   g++ main.cpp -o shopping_cart
