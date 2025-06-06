@@ -1,2 +1,2 @@
-Seller: Kyle	Product: Carrots	Quantity:420	Price: 11
-Seller: Kyle	Product: Guitar	Quantity:911	Price: 5
+Seller: Kyle		Product: Carrots		Quantity:400	Price:11
+Seller: Kyle		Product: Guitar		Quantity:900	Price:5
