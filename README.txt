@@ -34,8 +34,6 @@ Upon login, the seller can:
 5. View customer transactions  
 6. Logout  
 
-> ⚠️ **Note:** If you're only using `main.cpp` without the data files, the system won’t persist user credentials or product/cart data.
-
 ---
 
 ## 🔐 Default Credentials
@@ -51,9 +49,3 @@ To test the system quickly, use the following built-in accounts:
 - **Password:** `customerpass`
 
 ---
-
-## 🚀 How to Run
-
-1. Compile the code using a C++ compiler:
-   ```bash
-   g++ main.cpp -o shopping_cart
